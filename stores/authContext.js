@@ -12,13 +12,24 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    netlifyIdentity.on('login', user => {
+      setUser(user)
+      netlifyIdentity.close()
+    })
+
     // init netlify identity connection
     netlifyIdentity.init()
   }, [])
 
+  const login = () => {
+    netlifyIdentity.open()
+  }
+
+  const context = { user, login }
+
   return (
     <AuthContext.Provider
-      value={user}
+      value={context}
     >
       { children }
     </AuthContext.Provider>
